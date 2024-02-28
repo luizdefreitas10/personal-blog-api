@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: nest_clean_personal_blog
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: nest-clean-personal_blog
+      PGDATA: /data/postgres
+    volumes:
+      - ./data/pg:/data/postgres
