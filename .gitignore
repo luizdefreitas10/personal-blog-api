@@ -61,3 +61,8 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 #### DOCKER
 data
+
+private_key-base64.txt
+public_key-base64.txt
+private_key.pem
+public_key.pem
