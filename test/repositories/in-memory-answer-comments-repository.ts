@@ -1,7 +1,7 @@
 import { PaginationParams } from '@/core/repositories/pagination-params'
 import { AnswerCommentsRepository } from '@/domain/blog/application/repositories/answer-comments-repository'
 import { AnswerComment } from '@/domain/blog/enterprise/entities/answer-comment'
-import { InMemoryStudentsRepository } from './in-memory-students-repository'
+import { InMemoryStudentsRepository } from './in-memory-users-repository'
 import { CommentWithAuthor } from '@/domain/blog/enterprise/entities/value-objects/comment-with-author'
 
 export class InMemoryAnswerCommentsRepository

@@ -1,21 +1,17 @@
-import { faker } from '@faker-js/faker'
-
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
-import {
-  Student,
-  StudentProps,
-} from '@/domain/blog/enterprise/entities/student'
-import { Injectable } from '@nestjs/common'
+import { User, UserProps } from '@/domain/blog/enterprise/entities/user'
+import { PrismaUserMapper } from '@/infra/database/prisma/mappers/prisma-user-mapper'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
-import { PrismaStudentMapper } from '@/infra/database/prisma/mappers/prisma-student-mapper'
+import { faker } from '@faker-js/faker'
+import { Injectable } from '@nestjs/common'
 
-export function makeStudent(
-  override: Partial<StudentProps> = {},
+export function makeUser(
+  override: Partial<UserProps> = {},
   id?: UniqueEntityID,
 ) {
-  const student = Student.create(
+  const user = User.create(
     {
-      name: faker.person.fullName(),
+      userName: faker.person.fullName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
       ...override,
@@ -23,18 +19,18 @@ export function makeStudent(
     id,
   )
 
-  return student
+  return user
 }
 
 @Injectable()
-export class StudentFactory {
+export class UserFactory {
   constructor(private prisma: PrismaService) {}
 
-  async makePrismaStudent(data: Partial<StudentProps> = {}): Promise<Student> {
-    const student = makeStudent(data)
+  async makePrismaUser(data: Partial<UserProps> = {}): Promise<User> {
+    const student = makeUser(data)
 
     await this.prisma.user.create({
-      data: PrismaStudentMapper.toPrisma(student),
+      data: PrismaUserMapper.toPersistance(student),
     })
 
     return student

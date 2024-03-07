@@ -3,7 +3,7 @@ import { PaginationParams } from '@/core/repositories/pagination-params'
 import { QuestionsRepository } from '@/domain/blog/application/repositories/questions-repository'
 import { Question } from '@/domain/blog/enterprise/entities/question'
 import { InMemoryAttachmentsRepository } from './in-memory-attachments-repository'
-import { InMemoryStudentsRepository } from './in-memory-students-repository'
+import { InMemoryStudentsRepository } from './in-memory-users-repository'
 import { InMemoryQuestionAttachmentsRepository } from './in-memory-question-attachments-repository'
 import { QuestionDetails } from '@/domain/blog/enterprise/entities/value-objects/question-details'
 

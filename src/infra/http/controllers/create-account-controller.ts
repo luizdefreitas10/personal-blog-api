@@ -6,11 +6,15 @@ import {
   Post,
   Get,
   UsePipes,
+  Query,
+  BadRequestException,
 } from '@nestjs/common'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { hash } from 'bcryptjs'
 import { z } from 'zod'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
+import { RegisterUserUseCase } from '@/domain/blog/application/use-cases/register-user'
+import { UserAlreadyExistsError } from '@/domain/blog/application/use-cases/errors/user-already-exists'
 
 const createrAccountBodySchema = z.object({
   userName: z.string(),
@@ -22,7 +26,10 @@ type CreateAccountBodySchema = z.infer<typeof createrAccountBodySchema>
 
 @Controller('/accounts')
 export class CreateAccountController {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    // private prismaService: PrismaService
+    private registerUserUseCase: RegisterUserUseCase,
+  ) {}
 
   @Post()
   @HttpCode(201)
@@ -30,34 +37,22 @@ export class CreateAccountController {
   async createAccount(@Body() body: CreateAccountBodySchema) {
     const { email, password, userName } = body
 
-    const userAlreadyExists = await this.prismaService.user.findUnique({
-      where: {
-        email: body.email,
-      },
+    const result = await this.registerUserUseCase.execute({
+      email,
+      password,
+      userName,
     })
 
-    if (userAlreadyExists) {
-      throw new ConflictException('Email already exists.')
+    if (result.isLeft()) {
+      const error = result.value
+
+      switch (error.constructor) {
+        case UserAlreadyExistsError:
+          throw new ConflictException(error.message)
+        default:
+          throw new BadRequestException(error.message)
+      }
     }
 
-    const hashRounds = 8
-
-    const hashedPassword = await hash(password, hashRounds)
-
-    await this.prismaService.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        userName,
-      },
-    })
-  }
-
-  @Get()
-  async getUsers() {
-    const users = await this.prismaService.user.findMany()
-    return {
-      users,
-    }
   }
 }
